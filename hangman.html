@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="hangman.css">
+    <script src="hangman.js"></script>
+</head>
+
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <div class="theme-toggle">
+            <i class="fas fa-moon"></i>
+        </div>
+
+        <div class="sound-toggle">
+            <i class="fas fa-volume-up"></i>
+        </div>
+
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-indigo-700 mb-2">Hangman Game</h1>
+            <p class="text-lg text-gray-600">Guess the word before the hangman is complete!</p>
+        </div>
+
+        <div class="game-container">
+            <div class="w-full md:w-1/2 flex flex-col items-center">
+                <div class="hangman-container">
+                    <svg width="100%" height="100%" viewBox="0 0 300 300">
+                        <!-- Base -->
+                        <line x1="50" y1="280" x2="250" y2="280" class="hangman-part" id="part-0" style="opacity: 1;">
+                        </line>
+                        <!-- Vertical pole -->
+                        <line x1="100" y1="280" x2="100" y2="50" class="hangman-part" id="part-1" style="opacity: 0;">
+                        </line>
+                        <!-- Horizontal pole -->
+                        <line x1="100" y1="50" x2="200" y2="50" class="hangman-part" id="part-2" style="opacity: 0;">
+                        </line>
+                        <!-- Rope -->
+                        <line x1="200" y1="50" x2="200" y2="80" class="hangman-part" id="part-3" style="opacity: 0;">
+                        </line>
+                        <!-- Head -->
+                        <circle cx="200" cy="100" r="20" class="hangman-part" id="part-4" style="opacity: 0;"></circle>
+                        <!-- Body -->
+                        <line x1="200" y1="120" x2="200" y2="190" class="hangman-part" id="part-5" style="opacity: 0;">
+                        </line>
+                        <!-- Left arm -->
+                        <line x1="200" y1="140" x2="170" y2="160" class="hangman-part" id="part-6" style="opacity: 0;">
+                        </line>
+                        <!-- Right arm -->
+                        <line x1="200" y1="140" x2="230" y2="160" class="hangman-part" id="part-7" style="opacity: 0;">
+                        </line>
+                        <!-- Left leg -->
+                        <line x1="200" y1="190" x2="180" y2="230" class="hangman-part" id="part-8" style="opacity: 0;">
+                        </line>
+                        <!-- Right leg -->
+                        <line x1="200" y1="190" x2="220" y2="230" class="hangman-part" id="part-9" style="opacity: 0;">
+                        </line>
+                    </svg>
+                </div>
+
+                <div class="mt-4 flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="font-bold text-lg">Lives Remaining: <span id="lives-count">4</span></div>
+                    </div>
+                </div>
+
+                <div class="game-controls mt-4">
+                    <button id="restart-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                        <i class="fas fa-redo-alt mr-2"></i>Restart
+                    </button>
+                    <button id="new-game-btn"
+                        class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                        <i class="fas fa-plus mr-2"></i>New Game
+                    </button>
+                    <button id="hint-btn"
+                        class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
+                        <i class="fas fa-lightbulb mr-2"></i>Hint
+                    </button>
+                </div>
+            </div>
+
+            <div class="w-full md:w-1/2">
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <label for="category-select"
+                                class="block text-sm font-medium text-gray-700">Category:</label>
+                            <select id="category-select"
+                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                <option value="animals">Animals</option>
+                                <option value="countries">Countries</option>
+                                <option value="tech">Technology</option>
+                                <option value="sports">Sports</option>
+                                <option value="movies">Movies</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="difficulty-select"
+                                class="block text-sm font-medium text-gray-700">Difficulty:</label>
+                            <select id="difficulty-select"
+                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                <option value="easy">Easy</option>
+                                <option value="medium">Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                            <div class="difficulty-indicator mt-1">
+                                <div class="difficulty-dot active"></div>
+                                <div class="difficulty-dot active"></div>
+                                <div class="difficulty-dot active"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mb-4">
+                        <div class="font-bold text-xl mb-2">Current Word:</div>
+                        <div class="word-display" id="word-display">
+                            <div class="letter-blank"></div>
+                            <div class="letter-blank"></div>
+                            <div class="letter-blank"></div>
+                            <div class="letter-blank"></div>
+                            <div class="letter-blank"></div>
+                            <div class="letter-blank"></div>
+                            <div class="letter-blank"></div>
+                            <div class="letter-blank"></div>
+                        </div>
+                    </div>
+
+                    <div class="keyboard" id="keyboard">
+                        <div class="key" data-letter="a">a</div>
+                        <div class="key" data-letter="b">b</div>
+                        <div class="key" data-letter="c">c</div>
+                        <div class="key" data-letter="d">d</div>
+                        <div class="key" data-letter="e">e</div>
+                        <div class="key" data-letter="f">f</div>
+                        <div class="key" data-letter="g">g</div>
+                        <div class="key" data-letter="h">h</div>
+                        <div class="key" data-letter="i">i</div>
+                        <div class="key" data-letter="j">j</div>
+                        <div class="key" data-letter="k">k</div>
+                        <div class="key" data-letter="l">l</div>
+                        <div class="key" data-letter="m">m</div>
+                        <div class="key" data-letter="n">n</div>
+                        <div class="key" data-letter="o">o</div>
+                        <div class="key" data-letter="p">p</div>
+                        <div class="key" data-letter="q">q</div>
+                        <div class="key" data-letter="r">r</div>
+                        <div class="key" data-letter="s">s</div>
+                        <div class="key" data-letter="t">t</div>
+                        <div class="key" data-letter="u">u</div>
+                        <div class="key" data-letter="v">v</div>
+                        <div class="key" data-letter="w">w</div>
+                        <div class="key" data-letter="x">x</div>
+                        <div class="key" data-letter="y">y</div>
+                        <div class="key" data-letter="z">z</div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold mb-4">Game Statistics</h2>
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="text-3xl font-bold text-indigo-600" id="games-played">23</div>
+                            <div class="text-sm text-gray-500">Games Played</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="text-3xl font-bold text-green-600" id="games-won">21</div>
+                            <div class="text-sm text-gray-500">Games Won</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="text-3xl font-bold text-red-600" id="games-lost">2</div>
+                            <div class="text-sm text-gray-500">Games Lost</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="text-3xl font-bold text-yellow-600" id="win-percentage">91%</div>
+                            <div class="text-sm text-gray-500">Win Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="multiplayer-section mt-8">
+            <h2 class="text-xl font-bold mb-4">Multiplayer Mode</h2>
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="w-full md:w-1/2">
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h3 class="font-bold mb-2">Challenge a Friend</h3>
+                        <p class="mb-4">Create your own word and challenge friends to guess it!</p>
+                        <div class="mb-4">
+                            <label for="custom-word" class="block text-sm font-medium text-gray-700">Enter a
+                                word:</label>
+                            <input type="password" id="custom-word"
+                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                        <button id="create-challenge-btn"
+                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                            Create Challenge
+                        </button>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-1/2">
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h3 class="font-bold mb-2">Join a Challenge</h3>
+                        <p class="mb-4">Enter a challenge code to play a word created by a friend.</p>
+                        <div class="mb-4">
+                            <label for="challenge-code" class="block text-sm font-medium text-gray-700">Challenge
+                                Code:</label>
+                            <input type="text" id="challenge-code"
+                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                        <button id="join-challenge-btn"
+                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                            Join Challenge
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div class="modal" id="game-over-modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4" id="modal-title">Game Over</h2>
+            <p class="text-lg mb-4" id="modal-message">The word was: <span id="reveal-word"
+                    class="font-bold">chameleon</span></p>
+            <div class="flex justify-center gap-4">
+                <button id="modal-restart"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                    Play Again
+                </button>
+                <button id="modal-close" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hint Modal -->
+    <div class="modal" id="hint-modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4">Hint</h2>
+            <p class="text-lg mb-4" id="hint-text">Egg-laying mammal with a duck bill</p>
+            <button id="hint-modal-close"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                Got it!
+            </button>
+        </div>
+    </div>
+
+    <!-- Challenge Created Modal -->
+    <div class="modal" id="challenge-modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4">Challenge Created!</h2>
+            <p class="mb-4">Share this code with your friend:</p>
+            <div class="bg-gray-100 p-4 rounded-lg mb-4 flex justify-between items-center">
+                <span id="challenge-code-display" class="font-mono text-lg">ABC123</span>
+                <button id="copy-code-btn" class="text-indigo-600 hover:text-indigo-800">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+            <button id="challenge-modal-close"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Audio elements -->
+    <audio id="correct-sound" src="https://cdn.jsdelivr.net/gh/soundkit/free-soundkit@1.0.0/ui/switch-on.mp3"
+        preload="auto"></audio>
+    <audio id="incorrect-sound" src="https://cdn.jsdelivr.net/gh/soundkit/free-soundkit@1.0.0/ui/alert-error.mp3"
+        preload="auto"></audio>
+    <audio id="win-sound"
+        src="https://cdn.jsdelivr.net/gh/soundkit/free-soundkit@1.0.0/ui/confirmation-announcement.mp3"
+        preload="auto"></audio>
+    <audio id="lose-sound" src="https://cdn.jsdelivr.net/gh/soundkit/free-soundkit@1.0.0/ui/negative.mp3"
+        preload="auto"></audio>
+</body>
+
+</html>
