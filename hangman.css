@@ -1,0 +1,303 @@
+body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .game-container {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+
+        .hangman-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+
+        .hangman-part {
+            position: absolute;
+            stroke: #374151;
+            stroke-width: 4;
+            fill: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .word-display {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .letter-blank {
+            width: 40px;
+            height: 40px;
+            border-bottom: 3px solid #374151;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .key {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .key:hover {
+            background-color: #d1d5db;
+        }
+
+        .key.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .key.correct {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .key.incorrect {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .multiplayer-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .difficulty-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .difficulty-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #d1d5db;
+        }
+
+        .difficulty-dot.active {
+            background-color: #3b82f6;
+        }
+
+        /* Animation for correct guess */
+        @keyframes correctGuess {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .correct-animation {
+            animation: correctGuess 0.5s ease;
+        }
+
+        /* Animation for incorrect guess */
+        @keyframes incorrectGuess {
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .incorrect-animation {
+            animation: incorrectGuess 0.5s ease;
+        }
+
+        /* Animation for winning */
+        @keyframes winAnimation {
+            0% {
+                transform: translateY(0);
+            }
+
+            25% {
+                transform: translateY(-20px);
+            }
+
+            50% {
+                transform: translateY(0);
+            }
+
+            75% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .win-animation {
+            animation: winAnimation 1s ease;
+        }
+
+        .sound-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #4b5563;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #4b5563;
+        }
+
+        /* Dark theme styles */
+        .dark-theme {
+            background-color: #1f2937;
+            color: #f3f4f6;
+        }
+
+        .dark-theme .stat-card,
+        .dark-theme .multiplayer-section,
+        .dark-theme .modal-content {
+            background-color: #374151;
+            color: #f3f4f6;
+        }
+
+        .dark-theme .key {
+            background-color: #4b5563;
+            color: #f3f4f6;
+        }
+
+        .dark-theme .key:hover {
+            background-color: #6b7280;
+        }
+
+        .dark-theme .hangman-part {
+            stroke: #f3f4f6;
+        }
+
+        .dark-theme .letter-blank {
+            border-bottom-color: #f3f4f6;
+            color: #f3f4f6;
+        }
+    
