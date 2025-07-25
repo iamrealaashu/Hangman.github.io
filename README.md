@@ -1,4 +1,3 @@
-#a word guessing game
 <!DOCTYPE html>
 <html lang="en">
 
